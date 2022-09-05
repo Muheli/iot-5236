@@ -1,8 +1,8 @@
 from flask import Flask, render_template, url_for, request
 from turbo_flask import Turbo
 from time import sleep
-import sys
-import os
+import sys, os, json, signal
+#import subprocess
 
 IsGpioAvail = False
 try:
@@ -21,11 +21,12 @@ def GpioAction(inDuration):
     aRelayChannel = 4
     #
     GPIO.setmode(aChannelMapping)
-    GPIO.setup(aRelayChannel, GPIO.OUT, initial=GPIO.LOW)
+    GPIO.setup(aRelayChannel, GPIO.OUT, initial=GPIO.HIGH)
+    #GPIO.setup(aRelayChannel, GPIO.OUT)
     #...........#
-    GPIO.output(4, GPIO.HIGH)
+    GPIO.output(aRelayChannel, GPIO.LOW)
     sleep( inDuration )
-    GPIO.output(4, GPIO.LOW)
+    GPIO.output(aRelayChannel, GPIO.HIGH)
     #...........#
     GPIO.cleanup()
   else:
@@ -122,6 +123,20 @@ def knock():
         #return turbo.push(turbo.update( render_template('knock_form.html'), 'KnockFormDiv' ))
     else:
         return 'Not a valid request method for this route'
+        
+        
+@app.route('/server',  methods=['DELETE'])
+def server():
+    if request.method == 'DELETE':
+      #raise RuntimeError('App shutdown requested ...')
+      #subprocess.run("shutdown -h 0", shell=True, check=True)
+      #shutdown_func = request.environ.get('werkzeug.server.shutdown')
+      #if shutdown_func is None:
+      #  raise RuntimeError('Not running werkzeug')
+      #shutdown_func()
+      #sys.exit('App shutdown requested ...')
+      os.kill(os.getpid(), signal.SIGINT)
+      return jsonify({ "success": True, "message": "Shutting down this Flask server app..." })
 
 
 if __name__ == '__main__':
