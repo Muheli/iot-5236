@@ -11,11 +11,28 @@ try:
 except ImportError:
   print('GPIO not available for import.')
   
-if IsGpioAvail:
-  ChannelMapping = GPIO.BCM
-  RelayChannel = 4
 
 #########################
+
+
+def GpioAction(inDuration):
+  if IsGpioAvail:
+    aChannelMapping = GPIO.BCM
+    aRelayChannel = 4
+    #
+    GPIO.setmode(aChannelMapping)
+    GPIO.setup(aRelayChannel, GPIO.OUT, initial=GPIO.LOW)
+    #...........#
+    GPIO.output(4, GPIO.HIGH)
+    sleep( inDuration )
+    GPIO.output(4, GPIO.LOW)
+    #...........#
+    GPIO.cleanup()
+  else:
+    #...........#
+    sleep( inDuration )
+    #...........#
+    
 
 def IsProperGarageKey(inFormSelectList):
   aProperList = ['digit_1', 'digit_9']
@@ -36,21 +53,53 @@ def IsProperGarageKey(inFormSelectList):
 
 
 def HandleRightKey():
-  render_template('knock.html', BtnResponse='got it right')
-  sleep( 0.5 )
-  return render_template('knock.html')
+  turbo.push(turbo.update(
+    #render_template('knock.html', BtnResponseText='got it right'),
+    'got it right',
+    'BtnResponseDiv'
+  ))
+  #...........#
+  GpioAction( 0.5 )
+  #...........#
+  sleep( 1.5 )
+  #...........#
+  turbo.push(turbo.update(
+    render_template('knock_form.html'), 'KnockFormDiv'
+  ))
+  turbo.push(turbo.update(
+    #render_template('knock.html', BtnResponseText=' '),
+    ' ',
+    'BtnResponseDiv'
+  ))
+  return ''
 
 
 def HandleWrongKey():
-  render_template('knock.html', BtnResponse='Wrong digits. Try again.')
+  turbo.push(turbo.update(
+    #render_template('knock.html', BtnResponseText='Wrong digits. Try again.'),
+    'Wrong digits. Try again.',
+    'BtnResponseDiv'
+  ))
+  #...........#
   sleep( 2.5 )
-  return render_template('knock.html')
+  #...........#
+  turbo.push(turbo.update(
+    render_template('knock_form.html'), 'KnockFormDiv'
+  ))
+  turbo.push(turbo.update(
+    #render_template('knock.html', BtnResponseText=' '),
+    ' ',
+    'BtnResponseDiv'
+  ))
+  return ''
 
 
 #########################
 
 
 app = Flask(__name__)
+turbo = Turbo(app)
+
 
 
 @app.route('/')
@@ -65,11 +114,12 @@ def index():
 def knock():
     if request.method == 'POST':
         if IsProperGarageKey(request.form):
-          return render_template('knock.html', BtnResponse='got it right')
+          return HandleRightKey()
         else:
-          return render_template('knock.html', BtnResponse='got it wrong')          
+          return HandleWrongKey()          
     elif request.method == 'GET':
-        return render_template('knock.html')
+        return render_template('knock.html', KnockFormHtml=render_template('knock_form.html'))
+        #return turbo.push(turbo.update( render_template('knock_form.html'), 'KnockFormDiv' ))
     else:
         return 'Not a valid request method for this route'
 

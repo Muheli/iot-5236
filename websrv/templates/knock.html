@@ -1,35 +1,48 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-		<meta name="description" content="Garage Door App" />
-    <title>Garage Door Button</title>
+  <head>
+      <meta charset="UTF-8">
+      <meta name="description" content="Garage Door App" />
+      <title>The Hidden Button</title>
     
-    <!-- import the webpage's client-side javascript file -->
-    <script src="{{ url_for('static', filename='client.js') }}"></script>
-</head>
+      <style>
+        input.big_submit_button {
+          width: 200px;
+          height: 60px;
+        }
+        input.biggish {
+          width: 20px;
+          height: 20px;
+        }
+        label.biggish{
+          font-size: 36px;
+        }
+        div.horz_centered{
+          margin: auto;
+          width: 300px;
+          border: 5px solid #FFFF00;
+          padding: 10px;
+        }
+      </style>
 
-<body>
-<h1>Enter Poinsettia digits:</h1>
-<form action="knock" method="post">
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_1"> <label for="digit_1">1</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_2"> <label for="digit_2">2</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_3"> <label for="digit_3">3</label>
-    <br>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_4"> <label for="digit_4">4</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_5"> <label for="digit_5">5</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_6"> <label for="digit_6">6</label>
-    <br>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_7"> <label for="digit_7">7</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_8"> <label for="digit_8">8</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_9"> <label for="digit_9">9</label>
-    <br>
-    &nbsp; &nbsp; &nbsp; &nbsp;
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="checkbox" name="digit_0"> <label for="digit_0">0</label>
-    &nbsp; &nbsp; &nbsp; &nbsp; <input type="submit" value="Submit">
-</form>
-<br>
-{{ BtnResponse }}
+    
+      <!-- import the webpage's client-side javascript file -->
+      <!-- <script src="{{ url_for('static', filename='client.js') }}"></script> -->
+    
+      <!-- invoke turbo js -->
+      {{ turbo() }}
+  </head>
 
-</body>
+  <body>
+    <div id="BodyDiv" class="horz_centered">
+      <h1>Enter Poinsettia digits:</h1>
+      <div id="KnockFormDiv">
+        {{ KnockFormHtml|safe }}
+      </div>
+      <br/>
+      <div id="BtnResponseDiv">
+        {{ BtnResponseText }}
+      </div>
+    </div>
+  </body>
 </html>
