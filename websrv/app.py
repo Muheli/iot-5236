@@ -135,6 +135,8 @@ def server():
       #  raise RuntimeError('Not running werkzeug')
       #shutdown_func()
       #sys.exit('App shutdown requested ...')
+      #
+      # https://stackoverflow.com/a/60092131/19846634
       os.kill(os.getpid(), signal.SIGINT)
       return jsonify({ "success": True, "message": "Shutting down this Flask server app..." })
 
